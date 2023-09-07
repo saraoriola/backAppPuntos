@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema(
 
         age: {
             type: Number,
-            required: [true, "Por favor rellena tu edad"],
+            // required: [true, "Por favor rellena tu edad"],
         },
 
         confirmed: {

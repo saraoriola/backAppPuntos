@@ -52,10 +52,9 @@ const UserController = {
                 <a href="${url}?emailToken=${emailToken}">Click aquí para confirmar tu registro</a>`,
             });
 
-            res.status(201).json({ message: "Usuario registrado  exitosamente!", user, token: emailToken });
+            res.status(201).json({ message: "Usuario registrado  exitosamente!"});
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: "Error al regitrar al usuario" });
             next(error);
         }
     },
@@ -80,7 +79,7 @@ const UserController = {
 
             await user.save();
 
-            res.send({ message: "Bienvenid@ " + user.name, token });
+            res.send({ message: "Bienvenid@ " + user.name, user,token });
         } catch (error) {
             console.error(error);
         }
