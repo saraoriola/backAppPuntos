@@ -142,7 +142,7 @@ const UserController = {
     async userAndDoubts(req, res) {
         try {
             const user = await User.findById(req.user._id).populate({
-                path: "_idQuery",
+                path: "_idDoubt",
             });
             res.status(200).send(user);
         } catch (error) {
