@@ -139,7 +139,7 @@ const UserController = {
         }
     },
 
-    async userAndQueries(req, res) {
+    async userAndDoubts(req, res) {
         try {
             const user = await User.findById(req.user._id).populate({
                 path: "_idQuery",

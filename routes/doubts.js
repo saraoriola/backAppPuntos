@@ -6,15 +6,15 @@ const router = express.Router();
 
 router.post("/", QueryController.createQuery);
 
-router.put("/queries", authentication, QueryController.updateQuery);
+router.put("/doubts", authentication, QueryController.updateQuery);
 router.put("/id/:_id", authentication, isTeacher, QueryController.updateQueryById);
 router.put("/update/:topic", authentication, isTeacher, QueryController.updateQueryByTopic);
 router.put("/resolved/:queryId", authentication, isStudent, QueryController.markQueryAsResolved);
 router.put("/unresolved/:queryId", authentication, isStudent, QueryController.markQueryAsUnresolved);
 
-router.get("/page/queries", authentication, isTeacher, QueryController.getAllQueriesPagination);
+router.get("/page/doubts", authentication, isTeacher, QueryController.getAllDoubtsPagination);
 router.get("/all/all", QueryController.getEverything);
 
-router.delete("/queries/:queryId", authentication, QueryController.deleteQuery);
+router.delete("/doubts/:queryId", authentication, QueryController.deleteQuery);
 
 module.exports = router;

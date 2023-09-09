@@ -78,7 +78,7 @@ const QueryController = {
         }
     },
 
-    async getAllQueriesPagination(req, res) {
+    async getAllDoubtsPagination(req, res) {
         try {
             if (!req.user) {
                 return res.status(401).send({ message: "No estás autenticado" });
@@ -88,9 +88,9 @@ const QueryController = {
             const limit = 2;
             const skip = (page - 1) * limit;
 
-            const queries = await Query.find().limit(limit).skip(skip);
+            const doubts = await Query.find().limit(limit).skip(skip);
 
-            res.status(200).send({ message: "Estás viendo las dudas con paginación de 2 en 2", queries });
+            res.status(200).send({ message: "Estás viendo las dudas con paginación de 2 en 2", doubts });
         } catch (error) {
             console.error(error);
             res.status(500).send({ message: "Ha habido un problema al obtener las consultas" });
@@ -99,7 +99,7 @@ const QueryController = {
 
     async getEverything(req, res) {
         try {
-            const queries = await Query.find()
+            const doubts = await Query.find()
                 .populate({
                     path: "_idUser",
                     select: "_id name",
@@ -114,7 +114,7 @@ const QueryController = {
                 })
                 .select("_id topic question _idAnswer");
 
-            res.status(200).send({ message: "Datos obtenidos exitosamente", queries });
+            res.status(200).send({ message: "Datos obtenidos exitosamente", doubts });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Error al obtener las dudas y respuestas" });
