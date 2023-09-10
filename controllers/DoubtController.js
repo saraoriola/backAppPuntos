@@ -36,6 +36,35 @@ const DoubtController = {
         }
     },
 
+    async getDoubtById(req, res) {
+        try {
+            const { _id } = req.params;
+            const doubt = await Doubt.findById(_id)
+                .populate({
+                    path: "_idUser",
+                    select: "_id name",
+                })
+                .populate({
+                    path: "_idAnswer",
+                    select: "_id reply likes",
+                    populate: {
+                        path: "_idUser",
+                        select: "_id name",
+                    },
+                });
+    
+            if (!doubt) {
+                return res.status(404).send({ message: "The doubt does not exist" });
+            }
+    
+            res.status(200).send({ message: "Doubt obtained successfully", doubt });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({ message: "There was an issue fetching the doubt" });
+        }
+    },
+    
+
     async getDoubtsWithPagination(req, res) {
         try {
             if (!req.user) {
