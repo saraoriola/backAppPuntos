@@ -1,21 +1,34 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const DoubtSchema = new Schema(
+const { Schema } = mongoose;
+
+const answerSchema = new Schema({
+    answer: {
+        type: String,
+        required: [true, 'Please, fill in the answer'],
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    votes: Number,
+});
+
+const doubtSchema = new Schema(
     {
-        doubt: { type: String, required: [true, 'Please, fill in the doubt'] },
-        user: { type: Schema.Types.ObjectId, ref: 'User' },
-        answers: [
-            {
-                answer: {
-                    type: String,
-                    required: [true, 'Please, fill in the answer'],
-                },
-                user: { type: Schema.Types.ObjectId, ref: 'User' },
-                votes: Number,
-            },
-        ],
-        resolved: { type: Boolean },
+        doubt: {
+            type: String,
+            required: [true, 'Please, fill in the doubt'],
+        },
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        },
+        answers: [answerSchema],
+        resolved: {
+            type: Boolean,
+            default: false,
+        },
         topic: String,
         question: String,
         _idAnswer: [
@@ -34,6 +47,6 @@ const DoubtSchema = new Schema(
     }
 );
 
-const Doubt = mongoose.model("Doubt", DoubtSchema);
+const Doubt = mongoose.model("Doubt", doubtSchema);
 
 module.exports = Doubt;

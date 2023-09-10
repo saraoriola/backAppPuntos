@@ -18,6 +18,6 @@ app.use("/answers", require("./routes/answers"));
 
 app.use(handleTypeError);
 
-app.listen(PORT, () => console.log(`Servidor levantado en el puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 module.exports = app;
