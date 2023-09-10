@@ -29,7 +29,7 @@ const DoubtController = {
         try {
             const doubts = await Doubt.find();
 
-            res.status(200).send({ message: "All doubts", doubts });
+            res.status(200).send(doubts);
         } catch (error) {
             console.error(error);
             res.status(500).send({ message: "There was an issue fetching doubts" });
