@@ -15,10 +15,10 @@ const DoubtController = {
                 return res.status(409).json({ message: 'This query already exists' });
             }
     
-            const query = await Doubt.create({ ...req.body, user: req.user._id });
-            await User.findByIdAndUpdate(req.user._id, { $push: { _idDoubt: query._id } });
+            const doubt = await Doubt.create({ ...req.body, user: req.user._id });
+            await User.findByIdAndUpdate(req.user._id, { $push: { _idDoubt: doubt._id } });
     
-            res.status(201).send({ message: "Your query has been created", query });
+            res.status(201).send({ message: "Your query has been created", doubt });
         } catch (error) {
             console.error(error);
             next(error);
