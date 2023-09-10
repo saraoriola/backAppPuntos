@@ -6,7 +6,7 @@ const transporter = require("../config/nodemailer");
 const UserController = {
     async userConfirm(req, res) {
         try {
-            const token = req.query.emailToken;
+            const token = req.doubt.emailToken;
             const payload = jwt.verify(token, process.env.JWT_SECRET);
             await User.findOneAndUpdate({ email: payload.email }, { confirmed: true }, { new: true });
             res.status(200).send("Su correo ha sido validado, ya puede hacer login!");

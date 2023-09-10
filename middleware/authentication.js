@@ -10,15 +10,18 @@ const authentication = async (req, res, next) => {
         const user = await User.findOne({ _id: payload._id, tokens: token });
 
         if (!user) {
-            return res.status(401).send({ message: "No estas autorizado" });
+            return res.status(401).send({ message: "No estás autorizado" });
         }
-        req.user = user;
+
+        req.user = { _id: user._id };
+
         next();
     } catch (error) {
         console.error(error);
         return res.status(500).send({ error, message: "Ha habido un problema con el token" });
     }
 };
+
 
 const isTeacher = async (req, res, next) => {
     const teachers = ["teacher", "tAssis"];
@@ -30,9 +33,9 @@ const isTeacher = async (req, res, next) => {
 
 const isStudent = async (req, res, next) => {
     try {
-        const query = await Doubt.findById(req.body._idDoubt);
+        const doubt = await Doubt.findById(req.body._idDoubt);
 
-        if (query._idUser.toString() !== req.user._id.toString()) {
+        if (doubt._idUser.toString() !== req.user._id.toString()) {
             return res.status(403).send({ message: "No puedes editar esta duda, no es tuya" });
         }
 
@@ -43,4 +46,25 @@ const isStudent = async (req, res, next) => {
         return res.status(500).send({ error, message: "Hubo un problema al comprobar la autoría de la duda" });
     }
 };
-module.exports = { authentication, isTeacher, isStudent };
+
+
+const isAuthor = async (req, res, next) => {
+    try {
+      const doubt = await Doubt.findById(req.params._id);
+      if (doubt.user.toString() !== req.user._id.toString()) {
+        return res.status(403).send({ message: 'You are not the author' });
+      }
+      const answer = await Doubt.findById(req.params._id);
+      if (answer.user.toString() !== req.user._id.toString()) {
+        return res.status(403).send({ message: 'You are not the author' });
+      }
+      next();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({
+        error,
+        message: 'There was a problem checking the answer authorship',
+      });
+    }
+  };
+module.exports = { authentication, isTeacher, isStudent, isAuthor};
