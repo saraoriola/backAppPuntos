@@ -36,6 +36,16 @@ const DoubtController = {
         }
     },
 
+    async getById(req, res) {
+        try {
+            const doubt = await Doubt.findById(req.params._id);
+
+            res.status(200).send(doubt);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({ message: "There was an issue fetching doubts" });
+        }
+    },
     async getDoubtsWithPagination(req, res) {
         try {
             if (!req.user) {
