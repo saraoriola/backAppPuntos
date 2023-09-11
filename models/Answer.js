@@ -4,10 +4,6 @@ const Schema = mongoose.Schema;
 const AnswerSchema = new Schema(
     {
         reply: String,
-        likes: {
-            type: Number,
-            default: 0,
-        },
         _idDoubt: {
             type: Schema.Types.ObjectId,
             ref: "Doubt",

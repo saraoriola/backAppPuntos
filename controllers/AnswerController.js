@@ -4,13 +4,13 @@ const Doubt = require("../models/Doubt");
 const AnswerController = {
     async create(req, res) {
         try {
-            const { reply, likes, _idDoubt } = req.body;
+            const { reply, _idDoubt } = req.body;
 
-            if (!reply || !likes || !_idDoubt) {
+            if (!reply || !_idDoubt) {
                 return res.status(400).send({ message: "Debes completar todos los campos" });
             }
 
-            const answer = await Answer.create({ reply, likes, _idDoubt, _idUser: req.user._id });
+            const answer = await Answer.create({ reply, _idDoubt, _idUser: req.user._id });
             await Doubt.findByIdAndUpdate(_idDoubt, { $push: { _idAnswer: answer._id } });
             res.status(201).send({ message: "Respuesta creada exitosamente", answer });
         } catch (error) {
