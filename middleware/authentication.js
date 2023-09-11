@@ -13,8 +13,6 @@ const authentication = async (req, res, next) => {
             return res.status(401).send({ message: "No estás autorizado" });
         }
 
-        req.user = { _id: user._id };
-
         next();
     } catch (error) {
         console.error(error);
