@@ -8,9 +8,15 @@ router.post("/createDoubt", authentication, DoubtController.createDoubt);
 
 
 router.get("/allDoubts", DoubtController.getAllDoubts);
+<<<<<<< HEAD
 router.get("/id/:_id", authentication, DoubtController.getDoubtById);
+=======
+router.get("/id/:_id", DoubtController.getById);
+
+>>>>>>> 8fcc5d2371f21cae16c047fe05aee3174ae3b9b9
 router.get("/page/doubts", authentication, isTeacher, DoubtController.getDoubtsWithPagination);
 router.get("/all/all", DoubtController.getAllDoubtsWithDetails);
+router.get("/title/:title", DoubtController.getDoubtsByName);
 
 router.put("/updatedoubts/:_id", authentication, DoubtController.updateDoubtById);
 router.put("/update/:topic", authentication, isTeacher, DoubtController.updateDoubtByTopic);

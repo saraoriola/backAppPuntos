@@ -1,41 +1,47 @@
 const Doubt = require("../models/Doubt");
 const User = require("../models/User");
+const Answer = require("../models/Answer");
 
 const DoubtController = {
-    async createDoubt(req, res, next) {
-        try {
-            const { topic, question } = req.body;
+  async createDoubt(req, res, next) {
+    try {
+      const { topic, question } = req.body;
 
-            if (!topic || !question) {
-                return res.status(400).send({ message: "All fields must be filled out" });
-            }
+      if (!topic || !question) {
+        return res
+          .status(400)
+          .send({ message: "All fields must be filled out" });
+      }
 
-            const existingDoubt = await Doubt.findOne({ question });
-            if (existingDoubt) {
-                return res.status(409).json({ message: 'This query already exists' });
-            }
+      const existingDoubt = await Doubt.findOne({ question });
+      if (existingDoubt) {
+        return res.status(409).json({ message: "This query already exists" });
+      }
 
-            const doubt = await Doubt.create({ ...req.body, user: req.user._id });
-            await User.findByIdAndUpdate(req.user._id, { $push: { _idDoubt: doubt._id } });
+      const doubt = await Doubt.create({ ...req.body, user: req.user._id });
+      await User.findByIdAndUpdate(req.user._id, {
+        $push: { _idDoubt: doubt._id },
+      });
 
-            res.status(201).send({ message: "Your query has been created", doubt });
-        } catch (error) {
-            console.error(error);
-            next(error);
-        }
-    },
+      res.status(201).send({ message: "Your query has been created", doubt });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  },
 
-    async getAllDoubts(req, res) {
-        try {
-            const doubts = await Doubt.find();
+  async getAllDoubts(req, res) {
+    try {
+      const doubts = await Doubt.find();
 
-            res.status(200).send(doubts);
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ message: "There was an issue fetching doubts" });
-        }
-    },
+      res.status(200).send(doubts);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "There was an issue fetching doubts" });
+    }
+  },
 
+<<<<<<< HEAD
     async getDoubtById(req, res) {
         try {
             const { _id } = req.params;
@@ -70,151 +76,224 @@ const DoubtController = {
             if (!req.user) {
                 return res.status(401).send({ message: "You are not authenticated" });
             }
+=======
+  async getById(req, res) {
+    try {
+      const doubt = await Doubt.findById(req.params._id);
+>>>>>>> 8fcc5d2371f21cae16c047fe05aee3174ae3b9b9
 
-            const page = parseInt(req.query.page) || 1;
-            const limit = 2;
-            const skip = (page - 1) * limit;
+      res.status(200).send(doubt);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "There was an issue fetching doubts" });
+    }
+  },
 
-            const doubts = await Doubt.find().limit(limit).skip(skip);
+  async getDoubtsByName(req, res) {
+    try {
+      const keyword = req.params.title;
+      const regex = new RegExp(keyword, "i");
 
-            res.status(200).send({ message: "Doubts with pagination (2 per page)", doubts });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ message: "There was an issue fetching doubts" });
-        }
-    },
+      const doubts = await Doubt.find({ title: { $regex: regex } });
 
-    async getAllDoubtsWithDetails(req, res) {
-        try {
-            const doubts = await Doubt.find()
-                .populate({
-                    path: "_idUser",
-                    select: "_id name",
-                })
-                .populate({
-                    path: "_idAnswer",
-                    select: "_id reply likes",
-                    populate: {
-                        path: "_idUser",
-                        select: "_id name",
-                    },
-                })
-                .select("_id topic question _idAnswer");
+      if (!doubts || doubts.length === 0) {
+        return res
+          .status(400)
+          .send({ message: "No doubts found matching the keyword" });
+      }
 
-            res.status(200).send({ message: "Data obtained successfully", doubts });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Error fetching doubts and answers" });
-        }
-    },
+      res.send(doubts);
+    } catch (error) {
+      console.error(error);
 
-    async updateDoubtById(req, res) {
-        try {
-            if (!req.user) {
-                return res.status(401).send({ message: "You are not authenticated" });
-            }
+      res.status(500).send({ message: "There was a problem" });
+    }
+  },
 
-            const { _id } = req.params;
-            const updatedDoubt = await Doubt.findByIdAndUpdate(_id, req.body, { new: true });
+  async getDoubtsWithPagination(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ message: "You are not authenticated" });
+      }
 
-            if (!updatedDoubt) {
-                return res.status(404).send({ message: "The query does not exist" });
-            }
+      const page = parseInt(req.query.page) || 1;
+      const limit = 2;
+      const skip = (page - 1) * limit;
 
-            res.status(200).send({ message: "Query updated successfully", query: updatedDoubt });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ message: "There was an issue updating the query" });
-        }
-    },
+      const doubts = await Doubt.find().limit(limit).skip(skip);
 
-    async updateDoubtByTopic(req, res) {
-        try {
-            if (!req.user) {
-                return res.status(401).send({ message: "You are not authenticated" });
-            }
+      res
+        .status(200)
+        .send({ message: "Doubts with pagination (2 per page)", doubts });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "There was an issue fetching doubts" });
+    }
+  },
 
-            const { topic } = req.params;
-            const updatedDoubt = await Doubt.findOneAndUpdate({ topic }, req.body, { new: true });
+  async getAllDoubtsWithDetails(req, res) {
+    try {
+      const doubts = await Doubt.find()
+        .populate({
+          path: "_idUser",
+          select: "_id name",
+        })
+        .populate({
+          path: "_idAnswer",
+          select: "_id reply likes",
+          populate: {
+            path: "_idUser",
+            select: "_id name",
+          },
+        })
+        .select("_id topic question _idAnswer");
 
-            if (!updatedDoubt) {
-                return res.status(404).send({ message: "No query found with that topic" });
-            }
+      res.status(200).send({ message: "Data obtained successfully", doubts });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error fetching doubts and answers" });
+    }
+  },
 
-            res.status(200).send({ message: "Query updated successfully", query: updatedDoubt });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ message: "There was an issue updating the query" });
-        }
-    },
+  async updateDoubtById(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ message: "You are not authenticated" });
+      }
 
-    async markDoubtAsResolved(req, res) {
-        try {
-            if (!req.user) {
-                return res.status(401).send({ message: "You are not authenticated" });
-            }
+      const { _id } = req.params;
+      const updatedDoubt = await Doubt.findByIdAndUpdate(_id, req.body, {
+        new: true,
+      });
 
-            const { doubtId } = req.params;
-            const { resolved } = req.body;
+      if (!updatedDoubt) {
+        return res.status(404).send({ message: "The query does not exist" });
+      }
 
-            if (resolved === undefined) {
-                return res.status(400).send({ message: "Missing 'resolved' field" });
-            }
+      res
+        .status(200)
+        .send({ message: "Query updated successfully", query: updatedDoubt });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: "There was an issue updating the query" });
+    }
+  },
 
-            const query = await Doubt.findByIdAndUpdate(doubtId, { resolved }, { new: true });
+  async updateDoubtByTopic(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ message: "You are not authenticated" });
+      }
 
-            if (!query) {
-                return res.status(404).send({ message: "The query does not exist" });
-            }
+      const { topic } = req.params;
+      const updatedDoubt = await Doubt.findOneAndUpdate({ topic }, req.body, {
+        new: true,
+      });
 
-            res.status(200).send({ message: "The query has been marked as resolved!", query });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ message: "There was an issue updating the query status" });
-        }
-    },
+      if (!updatedDoubt) {
+        return res
+          .status(404)
+          .send({ message: "No query found with that topic" });
+      }
 
-    async markDoubtAsUnresolved(req, res) {
-        try {
-            if (!req.user) {
-                return res.status(401).send({ message: "You are not authenticated" });
-            }
+      res
+        .status(200)
+        .send({ message: "Query updated successfully", query: updatedDoubt });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: "There was an issue updating the query" });
+    }
+  },
 
-            const { doubtId } = req.params;
+  async markDoubtAsResolved(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ message: "You are not authenticated" });
+      }
 
-            const query = await Doubt.findByIdAndUpdate(doubtId, { resolved: false }, { new: true });
+      const { doubtId } = req.params;
+      const { resolved } = req.body;
 
-            if (!query) {
-                return res.status(404).send({ message: "The query does not exist" });
-            }
+      if (resolved === undefined) {
+        return res.status(400).send({ message: "Missing 'resolved' field" });
+      }
 
-            res.status(200).send({ message: "The query has been marked as unresolved", query });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ message: "There was an issue updating the query status" });
-        }
-    },
+      const query = await Doubt.findByIdAndUpdate(
+        doubtId,
+        { resolved },
+        { new: true }
+      );
 
-    async deleteDoubt(req, res) {
-        try {
-            if (!req.user) {
-                return res.status(401).send({ message: "You are not authenticated" });
-            }
+      if (!query) {
+        return res.status(404).send({ message: "The query does not exist" });
+      }
 
-            const { doubtId } = req.params;
+      res
+        .status(200)
+        .send({ message: "The query has been marked as resolved!", query });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: "There was an issue updating the query status" });
+    }
+  },
 
-            const deletedDoubt = await Doubt.findByIdAndDelete(doubtId);
+  async markDoubtAsUnresolved(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ message: "You are not authenticated" });
+      }
 
-            if (!deletedDoubt) {
-                return res.status(404).send({ message: "The query does not exist" });
-            }
+      const { doubtId } = req.params;
 
-            res.status(200).send({ message: "Query deleted successfully" });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({ message: "There was an issue deleting the query" });
-        }
-    },
+      const query = await Doubt.findByIdAndUpdate(
+        doubtId,
+        { resolved: false },
+        { new: true }
+      );
+
+      if (!query) {
+        return res.status(404).send({ message: "The query does not exist" });
+      }
+
+      res
+        .status(200)
+        .send({ message: "The query has been marked as unresolved", query });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: "There was an issue updating the query status" });
+    }
+  },
+
+  async deleteDoubt(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).send({ message: "You are not authenticated" });
+      }
+
+      const { doubtId } = req.params;
+
+      const deletedDoubt = await Doubt.findByIdAndDelete(doubtId);
+
+      if (!deletedDoubt) {
+        return res.status(404).send({ message: "The query does not exist" });
+      }
+
+      res.status(200).send({ message: "Query deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({ message: "There was an issue deleting the query" });
+    }
+  },
 };
 
 module.exports = DoubtController;
