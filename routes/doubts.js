@@ -12,6 +12,7 @@ router.get("/id/:_id", DoubtController.getById);
 
 router.get("/page/doubts", authentication, isTeacher, DoubtController.getDoubtsWithPagination);
 router.get("/all/all", DoubtController.getAllDoubtsWithDetails);
+router.get("/title/:title", DoubtController.getDoubtsByName);
 
 router.put("/doubts/:_id", authentication, DoubtController.updateDoubtById);
 router.put("/update/:topic", authentication, isTeacher, DoubtController.updateDoubtByTopic);

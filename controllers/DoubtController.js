@@ -44,13 +44,35 @@ const DoubtController = {
   async getById(req, res) {
     try {
       const doubt = await Doubt.findById(req.params._id);
-        console.log(doubt)
+
       res.status(200).send(doubt);
     } catch (error) {
       console.error(error);
       res.status(500).send({ message: "There was an issue fetching doubts" });
     }
   },
+
+  async getDoubtsByName(req, res) {
+    try {
+      const keyword = req.params.title;
+      const regex = new RegExp(keyword, "i");
+
+      const doubts = await Doubt.find({ title: { $regex: regex } });
+
+      if (!doubts || doubts.length === 0) {
+        return res
+          .status(400)
+          .send({ message: "No doubts found matching the keyword" });
+      }
+
+      res.send(doubts);
+    } catch (error) {
+      console.error(error);
+
+      res.status(500).send({ message: "There was a problem" });
+    }
+  },
+
   async getDoubtsWithPagination(req, res) {
     try {
       if (!req.user) {
