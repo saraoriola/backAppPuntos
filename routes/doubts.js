@@ -8,6 +8,8 @@ router.post("/createDoubt", authentication, DoubtController.createDoubt);
 
 
 router.get("/allDoubts", DoubtController.getAllDoubts);
+router.get("/id/:_id", DoubtController.getById);
+
 <<<<<<< HEAD
 router.get("/id/:_id", authentication, DoubtController.getDoubtById);
 =======
@@ -18,7 +20,7 @@ router.get("/page/doubts", authentication, isTeacher, DoubtController.getDoubtsW
 router.get("/all/all", DoubtController.getAllDoubtsWithDetails);
 router.get("/title/:title", DoubtController.getDoubtsByName);
 
-router.put("/updatedoubts/:_id", authentication, DoubtController.updateDoubtById);
+router.put("/doubts/:_id", authentication, DoubtController.updateDoubtById);
 router.put("/update/:topic", authentication, isTeacher, DoubtController.updateDoubtByTopic);
 router.put("/resolved/:doubtId", authentication, isStudent, DoubtController.markDoubtAsResolved);
 router.put("/unresolved/:doubtId", authentication, isStudent, DoubtController.markDoubtAsUnresolved);
