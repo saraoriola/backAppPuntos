@@ -11,7 +11,6 @@ const answerSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
-    votes: Number,
 });
 
 const doubtSchema = new Schema(
@@ -24,7 +23,18 @@ const doubtSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User',
         },
-        answers: [answerSchema],
+        answers: [
+            {
+                answer: {
+                    type: String,
+                    required: [true, 'MODEL'],
+                },
+                user: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'User',
+                },
+            }
+        ],
         resolved: {
             type: Boolean,
             default: false,

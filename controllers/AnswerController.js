@@ -4,20 +4,35 @@ const Doubt = require("../models/Doubt");
 const AnswerController = {
     async create(req, res) {
         try {
-            const { reply, _idDoubt } = req.body;
-
-            if (!reply || !_idDoubt) {
+            const { reply } = req.body;
+            const { _id } = req.params;
+            const _idUser = req.user._id;
+    
+            if (!reply) {
                 return res.status(400).send({ message: "Debes completar todos los campos" });
             }
-
-            const answer = await Answer.create({ reply, _idDoubt, _idUser: req.user._id });
-            await Doubt.findByIdAndUpdate(_idDoubt, { $push: { _idAnswer: answer._id } });
+    
+            const answer = {
+                answer: reply,
+                user: _idUser
+            };
+    
+            const doubt = await Doubt.findById(_id);
+            if (!doubt) {
+                console.log("Doubt not found.");
+                return res.status(404).send({ message: "Duda no encontrada" });
+            }
+    
+            doubt.answers.push(answer);
+            await doubt.save();
+    
             res.status(201).send({ message: "Respuesta creada exitosamente", answer });
         } catch (error) {
             console.error(error);
             res.status(500).send({ message: "Ha ocurrido un problema al crear la respuesta" });
         }
     },
+
 
     async getAllAnswers(req, res) {
         try {

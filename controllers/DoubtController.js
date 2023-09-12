@@ -1,5 +1,6 @@
 const Doubt = require("../models/Doubt");
 const User = require("../models/User");
+const Answer = require('../models/Answer');
 
 const DoubtController = {
     async createDoubt(req, res, next) {
