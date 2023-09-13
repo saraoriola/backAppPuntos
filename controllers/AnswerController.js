@@ -26,7 +26,7 @@ const AnswerController = {
             doubt.answers.push(answer);
             await doubt.save();
     
-            res.status(201).send({ message: "Respuesta creada exitosamente", answer });
+            res.status(201).send({ message: "Respuesta creada exitosamente", doubt });
         } catch (error) {
             console.error(error);
             res.status(500).send({ message: "Ha ocurrido un problema al crear la respuesta" });

@@ -56,8 +56,15 @@ const DoubtController = {
   async getDoubtsByName(req, res) {
     try {
       const title = req.params.title; 
-  
-      const doubts = await Doubt.find({ doubt: { $eq: title } }); 
+      if (title.length>50){
+
+        return res.status(400).send('Búsqueda demasiado larga')
+        
+        }
+        
+        const doubt = new RegExp(title, "i");
+        
+        const doubts = await Doubt.find({doubt});
   
       res.status(200).send(doubts);
     } catch (error) {
@@ -65,7 +72,7 @@ const DoubtController = {
       res.status(500).send({ message: "There was a problem" });
     }
   },
-  
+
   async getDoubtsWithPagination(req, res) {
     try {
       if (!req.user) {
