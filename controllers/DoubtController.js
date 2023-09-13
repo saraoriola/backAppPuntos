@@ -249,7 +249,7 @@ const DoubtController = {
         return res.status(404).send({ message: "The query does not exist" });
       }
 
-      res.status(200).send({ message: "Query deleted successfully" });
+      res.status(200).send({ message: "Query deleted successfully" ,deletedDoubt});
     } catch (error) {
       console.error(error);
       res
