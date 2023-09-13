@@ -6,6 +6,7 @@ const answerSchema = new Schema({
     answer: {
         type: String,
         required: [true, 'Please, fill in the answer'],
+        ref: "Answer",
     },
     user: {
         type: Schema.Types.ObjectId,
@@ -28,6 +29,7 @@ const doubtSchema = new Schema(
                 answer: {
                     type: String,
                     required: [true, 'MODEL'],
+                    ref: "Answer"
                 },
                 user: {
                     type: Schema.Types.ObjectId,

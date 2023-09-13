@@ -4,16 +4,15 @@ const { authentication, isTeacher, isStudent, isAuthor } = require("../middlewar
 
 const router = express.Router();
 
-router.post("/createDoubt", authentication, DoubtController.createDoubt);
+router.post("/createDoubt", authentication, DoubtController.createDoubt); // POSTMAN CHECK
 
 
-router.get("/allDoubts", DoubtController.getAllDoubts);
-router.get("/id/:_id", DoubtController.getById);
+router.get("/allDoubts", DoubtController.getAllDoubts); 
+router.get("/id/:_id", DoubtController.getById); // POSTMAN CHECK
 
 router.get("/page/doubts", authentication, isTeacher, DoubtController.getDoubtsWithPagination);
 router.get("/all/all", DoubtController.getAllDoubtsWithDetails);
-router.get("/title/:title", DoubtController.getDoubtsByName);
-
+router.get('/search/:title', DoubtController.getDoubtsByName);
 router.put("/doubts/:_id", authentication, DoubtController.updateDoubtById);
 router.put("/update/:topic", authentication, isTeacher, DoubtController.updateDoubtByTopic);
 router.put("/resolved/:doubtId", authentication, isStudent, DoubtController.markDoubtAsResolved);
